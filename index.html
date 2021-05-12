@@ -1,8 +1,14 @@
 <style>
 .memory_box{
-  background-color:orange; width: 200px; height: 200px;
+  background-color:orange;
+  width: 200px;
+  height: 200px;
+  text-align: center;
+  line-height: 200px;
+  font-size:50px;
 }
 </style>
+
 
 <h1>Memory Game</h1>
 
@@ -36,3 +42,75 @@
     </td>
   </tr>
 </table>
+
+<script src="jquery-3.6.0.min.js"></script>
+<script>
+
+//solution by Laurens Holst at https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+$(".memory_box").on("click", function(){
+  var this_index  = this.id.replace("box_","");
+  var this_letter = card_obj["card_letters"][this_index];
+  $(this).html(this_letter);
+
+  /*
+    Add the box id to the list of selected boxes
+  */
+  card_obj["selected_boxes"].push(this.id);
+
+  /*
+    Add the selected letter to the list of visible letters
+  */
+  card_obj["visible_letters"].push(this_letter);
+
+  var cards_visible = card_obj["selected_boxes"].length;
+
+  if(cards_visible == 2){
+    var first_letter  = card_obj["visible_letters"][0];
+    var second_letter = card_obj["visible_letters"][1];
+    if(first_letter == second_letter){
+      // remove these matching cards/boxes from the game
+      setTimeout(function(){
+        var first_box = card_obj["selected_boxes"][0];
+        var second_box = card_obj["selected_boxes"][1];
+        $("#" + first_box).fadeOut();
+        $("#" + second_box).fadeOut();
+        card_obj["selected_boxes"] = [];
+        card_obj["visible_letters"] = [];
+      }, 2000);
+    } else {
+      //what to do if the two letters don't match
+      setTimeout(function(){
+        //what we want to do after 2000 milliseconds
+        $(".memory_box").html("");
+        card_obj["selected_boxes"] = [];
+        card_obj["visible_letters"] = [];
+      },2000);
+    }
+  }
+});
+
+card_obj = {
+  card_letters: [
+    "a",  //box 0
+    "b",  //box 1
+    "c",  //box 2
+    "d",  //box 3
+    "a",  //box 4
+    "b",  //box 5
+    "c",  //box 6
+    "d"   //box 7
+  ],
+  visible_letters: [],
+  selected_boxes: []
+};
+
+shuffleArray(card_obj["card_letters"]);
+
+</script>
